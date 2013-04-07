@@ -152,23 +152,36 @@
      });
   
      markerCluster = new MarkerClusterer(map);
-  
-    //get [Lat,Long] pairs from data.json to markers[]
-      for (var i = 0; i < 4; i++) {
-        var article = data.results[i];
-        var headlines = article.title;
-        var link = article.url;
-        var place = article.location;
-        //add marker to markercluster
-        var lat = getCoordinates(place).lat;
-        var lng = getCoordinates(place).lng;
-        if(lat != 0 && lng != 0)
-          addMarker(lat,lng,headlines,link,place);
-      } 
 
-        //add all markers to markerclusterer
-        markerCluster = new MarkerClusterer(map, markersArr);
-      }
+     var start = 20070505;
+     var end = 20100101;
+     var topic = "romney";
+  
+    var query = "/otx/"+topic+"?start="+start+"&end="+end+"";
+    $.ajax({
+      url: query,
+      type: 'get',
+      dataType: 'json',
+      async: false,
+      success: function(data) {
+          for(var i = 0; i < data.results.length - 1; i++)
+          {
+            var article = data.results[i];
+            var headlines = article.title;
+            var link = article.url;
+            var place = article.location;
+            //add marker to markercluster
+            var lat = getCoordinates(place).lat;
+            var lng = getCoordinates(place).lng;
+            if(lat != 0 && lng != 0)
+              addMarker(lat,lng,headlines,link,place);
+          }
+        }
+      });
+
+      //add all markers to markerclusterer
+      markerCluster = new MarkerClusterer(map, markersArr);
+    }
 
       google.maps.event.addDomListener(window, 'load', initialize);
       </script>
