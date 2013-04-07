@@ -15,7 +15,7 @@ function makeRequests(allresults, i, response, startdate, enddate)
 	datitle = datitle.replace(/\&\#x2019;/g,'');
 	var options2 = {
 		 host: 'api.nytimes.com',
-		  path: '/svc/search/v1/article?query=title:"' + datitle  + '"&begin_date=' + startdate + '&end_date=' + enddate + '&facets=geo_facet&api-key=6f4c008a54e578de8790e9332014fd9d:19:67527233&format=json'
+		  path: '/svc/search/v1/article?query=title:"' + datitle  + '"&begin_date=' + startdate + '&end_date=' + enddate + '&facets=geo_facet&api-key=columbiahack&format=json'
 		};
 		console.log("options2: " + options2.path + "\n");
 		console.log("allresults: " + allresults[i].title);
@@ -54,7 +54,7 @@ if (ii < 0)
 }
 var options = {
  host: 'api.nytimes.com',
-  path:  '/svc/search/v1/article?query=' + searchterm +'&begin_date=' + startd + '&end_date=' + endd + '&offset=' + ii + '&facets=geo_facet&api-key=6f4c008a54e578de8790e9332014fd9d:19:67527233&format=json'
+  path:  '/svc/search/v1/article?query=' + searchterm +'&begin_date=' + startd + '&end_date=' + endd + '&offset=' + ii + '&facets=geo_facet&api-key=columbiahack&format=json'
 };
 
   http.get(options, function(res){
@@ -157,7 +157,7 @@ makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
    response.writeHead(200, {"Content-Type": "application/json"});
    var options = {
      host: 'api.nytimes.com',
-      path: '/svc/search/v2/articlesearch.json?' + pathname //'index.html'
+      path: '/svc/search/v2/articlesearch.json?' + pathname 
     }
     http.get(options, function(res){
 
@@ -191,7 +191,7 @@ makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
       var eDate = i+"1231";
 
       cb[j] = { host: 'api.nytimes.com',
-      path: '/svc/search/v2/articlesearch.json?' + "q="+arr[2]+"&begin_date="+sDate+"&end_date="+eDate+"&fl=web_url,headline"+"&hl=true&api-key=columbiahack"
+      path: '/svc/search/v2/articlesearch.json?' + "q="+arr[2]+"&begin_date="+sDate+"&end_date="+eDate+"&hl=true&api-key=columbiahack"
       }
     }
     response.write('{"years": [');
