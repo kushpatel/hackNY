@@ -18,14 +18,26 @@ http.createServer(function(request, response) {
     response.writeHead(200, {"Content-Type": "text/html"});
     response.write(fs.readFileSync('MarkerClusterer/dev files/map.html'));
     response.end();
-  } 
+  }
+  else if (pathname === "src/data.json")
+  {
+    response.writeHead(200, {"Content-Type": "application/json"});
+    response.write(fs.readFileSync('MarkerClusterer/dev files/src/data.json'));
+    response.end();
+  }
+  else if (pathname === "src/markerclusterer.js")
+  {
+    response.writeHead(200, {"Content-Type": "application/json"});
+    response.write(fs.readFileSync('MarkerClusterer/dev files/src/markerclusterer.js'));
+    response.end();
+  }
   else if (pathname.substring(0,7) === "gplace/")
   {
    pathname = pathname.substring(7);
    console.log(pathname);
    response.writeHead(200, {"Content-Type": "application/json"});
    var options = {
-     host: 'maps.googleapis.com/',
+     host: 'maps.googleapis.com',
       path: '/maps/api/geocode/json?address='+pathname+"&sensor=false"
     }
     http.get(options, function(res){
@@ -43,6 +55,7 @@ http.createServer(function(request, response) {
 
       res.on('end',function(){
        response.write(data);
+       console.log(data);
        response.end();
      })
     }); 
