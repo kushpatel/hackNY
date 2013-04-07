@@ -71,9 +71,8 @@ var options = {
 		var counter = numarticles;
 		console.log(numarticles);
 
-	console.log("starting makeequests");
+	
 	makeRequests(thedata.results, numarticles -1, response, startd, endd);
-  console.log("starting makeequestsAll");
 	makeAllRequests(ii - 1, pathname, response, searchterm, startd, endd);
 	});
 	});
@@ -90,10 +89,10 @@ http.createServer(function(request, response) {
     response.write(fs.readFileSync('MarkerClusterer/dev files/map.html'));
     response.end();
   }
-  else if (pathname === "logo.gif")
+  else if (pathname === "src/data.json")
   {
-    response.writeHead(200, {"Content-Type": "image/gif"});
-    response.write(fs.readFileSync('logo.gif'));
+    response.writeHead(200, {"Content-Type": "application/json"});
+    response.write(fs.readFileSync('MarkerClusterer/dev files/src/data.json'));
     response.end();
   }
   else if (pathname === "src/markerclusterer.js")
@@ -191,7 +190,7 @@ makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
       var eDate = i+"1231";
 
       cb[j] = { host: 'api.nytimes.com',
-      path: '/svc/search/v2/articlesearch.json?' + "q="+arr[2]+"&begin_date="+sDate+"&end_date="+eDate+"&fl=web_url,headline"+"&hl=true&api-key=columbiahack"
+      path: '/svc/search/v2/articlesearch.json?' + "q="+arr[2]+"&begin_date="+sDate+"&end_date="+eDate+"&hl=true&api-key=columbiahack"
       }
     }
     response.write('{"years": [');
