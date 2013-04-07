@@ -18,7 +18,35 @@ http.createServer(function(request, response) {
     response.writeHead(200, {"Content-Type": "text/html"});
     response.write(fs.readFileSync('index.html'));
     response.end();
-  }   
+  } 
+  else if (pathname.substring(0,7) === "gplace/")
+  {
+   pathname = pathname.substring(7);
+   console.log(pathname);
+   response.writeHead(200, {"Content-Type": "application/json"});
+   var options = {
+     host: 'maps.googleapis.com/',
+      path: '/maps/api/geocode/json?address='+pathname+"&sensor=false"
+    }
+    http.get(options, function(res){
+
+
+      var data = '';
+
+      res.on('data', function (chunk){
+        data += chunk;
+      });
+
+      res.on('error', function(chunk){
+       data += "error";
+     });
+
+      res.on('end',function(){
+       response.write(data);
+       response.end();
+     })
+    }); 
+  } 
   else if (pathname.substring(0,4) === "nyt/")
   {
    pathname = pathname.substring(4);

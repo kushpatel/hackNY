@@ -40,7 +40,7 @@
 
  function getCoordinates(place)
  {
-  var query = "http://maps.googleapis.com/maps/api/geocode/json?address="+place+"&sensor=false";
+  var query = "gplace/"+place;
   
   jQuery.extend({
     getValues: function(query) {
