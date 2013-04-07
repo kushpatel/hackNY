@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>D3 Test</title>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.8/d3.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/black-tie/jquery-ui.css">
+</head>
+<body>
+    <input type="text" name="topic" id="txt_topic" size="30" maxlength="70">
+    <input type="text" name="sDate" id="txt_sDate" size="30" maxlength="70">
+    <input type="text" name="eDate" id="txt_eDate" size="30" maxlength="70">
+    <button type="button" onclick="getChart()">Get Chart!</button>
+    
+    <script type="text/javascript">
+    function getChart()
+    {
+        var search = encodeURIComponent(document.getElementById("txt_topic").value);
+        var arr = Array();
+        var sDate = encodeURIComponent(document.getElementById("txt_sDate").value);
+        var eDate = encodeURIComponent(document.getElementById("txt_eDate").value);
+        d3.json("myt/"+sDate+"/"+eDate+"/"+search, function(dataset){
+            $("svg").remove();
+            $("body div").remove();
+            //Width and height
+            var w = 800;
+            var h = 100;
+            var barPadding = 1;
+            
+            //Create SVG element
+            var svg1 = d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+    
+            var sum =0, sq_sum = 0, max =0;
+           for(var i =0; i< dataset.years.length; i++)
+           {
+                sum += dataset.years[i].response.meta.hits;
+                sq_sum += dataset.years[i].response.meta.hits * dataset.years[i].response.meta.hits;
+                if (max < dataset.years[i].response.meta.hits) max = dataset.years[i].response.meta.hits;
+
+                $("body").append("<div id='dialog"+i+"' title='Top articles for "+txt_topic.value+"' ></div>");
+                $("#dialog"+i).css("visibility", "hidden");
+                for(var j =0; j < dataset.years[i].response.docs.length; j++ )
+                {
+                  var x = dataset.years[i].response.docs[j];
+                  $("#dialog"+i).append("<p><a href='"+x.web_url+"' target='_blank'"+x.headline.main+"</a></p>");
+                }           
+
+            }
+            var mean = sum / dataset.years.length;
+            var variance = sq_sum / dataset.years.length - mean * mean;
+            var sd = Math.sqrt(variance);
+            
+    
+            svg1.selectAll("rect")
+               .data(dataset.years)
+               .enter()
+               .append("rect")
+               .attr("x", function(d, i) {
+                    return i * (w / dataset.years.length);
+               })
+               .attr("y", function(d) {
+                    return h - (d.response.meta.hits/max * 100);
+               })
+               .attr("width", w / dataset.years.length - barPadding)
+               .attr("fill", function(d) {
+                    if (d.response.meta.hits - mean > sd)
+                        return "black";
+                    else
+                        return "grey";
+                })
+               .attr("height", function(d) {
+                    return d.response.meta.hits / max * 100 ;
+               })
+              .on("click", function(){ 
+                    var i = Math.round(this.x.baseVal.value * dataset.years.length / w);
+                    $( "#dialog"+i ).dialog();
+                    $( "#dialog"+i ).css('visibility','visible');
+              });
+
+              var xScale = d3.scale.linear()
+                     .domain([0, dataset.years.length])
+                     .range([0, 15]);
+              svg1.append("g")
+                .call(d3.svg.axis().ticks(dataset.years.length)
+                .scale(xScale)
+                .orient("bottom"));
+            });
+          }
+    </script>  
+
+    
+</body>
+</html>  
