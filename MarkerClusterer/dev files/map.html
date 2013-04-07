@@ -38,7 +38,7 @@
       var markersArr = [];
       var markerCluster;
 
-      function getCoordinates(place)
+      function getCoordinates(place,attempts)
       {
          var query = "gplace/"+place;
          
@@ -55,8 +55,13 @@
                  point.lat = data.results[0].geometry.location.lat;
                  point.lng = data.results[0].geometry.location.lng;
                 } catch (err){
+                  if(attempts == 0) {
                   point.lat = 0;
                   point.lng = 0;
+                  } else {
+                    attempts--;
+                    setTimeout(getCoordinates(place,attempts),1000);
+                  }
                 }
                }
              });
@@ -171,8 +176,9 @@
             var link = article.url;
             var place = article.location;
             //add marker to markercluster
-            var lat = getCoordinates(place).lat;
-            var lng = getCoordinates(place).lng;
+            var point = getCoordinates(place,5);
+            var lat = point.lat;
+            var lng = point.lng;
             if(lat != 0 && lng != 0)
               addMarker(lat,lng,headlines,link,place);
           }

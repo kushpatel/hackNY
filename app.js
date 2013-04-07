@@ -112,7 +112,7 @@ var searchterm = pathname;
 
  response.writeHead(200, {"Content-Type": "application/json"});
 response.write("{ \"results\" : [\n");
-var numpages = 4;
+var numpages = 15;
 makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
 
   }
