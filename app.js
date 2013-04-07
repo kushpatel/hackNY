@@ -36,6 +36,10 @@ http.createServer(function(request, response) {
    pathname = pathname.substring(7);
    console.log(pathname);
    response.writeHead(200, {"Content-Type": "application/json"});
+   /*var options = {
+     host: 'api.nytimes.com',
+      path: '/svc/semantic/v2/geocodes/query.json?&name='+pathname+'&api-key=5a6fcc8f32060f3572a31023df9ae3e3:12:67526310'
+    }*/
    var options = {
      host: 'maps.googleapis.com',
       path: '/maps/api/geocode/json?address='+pathname+"&sensor=false"
