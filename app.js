@@ -43,7 +43,41 @@ function makeRequests(allresults, i, response, startdate, enddate)
 			makeRequests(allresults, i - 1, response, startdate, enddate);
 		    });
 		}); 
-	}
+}
+
+function makeAllRequests(ii, pathname, response, searchterm, startd, endd)
+{
+if (ii < 0)
+{
+	return;
+	
+}
+var options = {
+ host: 'api.nytimes.com',
+  path:  '/svc/search/v1/article?query=' + searchterm +'&begin_date=' + startd + '&end_date=' + endd + '&offset=' + ii + '&facets=geo_facet&api-key=columbiahack&format=json'
+};
+
+  http.get(options, function(res){
+    var data = '';
+
+    res.on('data', function (chunk){
+        data += chunk;
+    });
+
+    res.on('end',function(){
+	thedata = JSON.parse(data);
+	
+		numarticles = thedata.results.length;
+		var counter = numarticles;
+		console.log(numarticles);
+
+	
+	makeRequests(thedata.results, numarticles -1, response, startd, endd);
+	makeAllRequests(ii - 1, pathname, response, searchterm, startd, endd);
+	});
+	});
+console.log(pathname);
+}
 
 
 http.createServer(function(request, response) {
@@ -77,30 +111,9 @@ var endd = thequery.end;
 var searchterm = pathname;
 
  response.writeHead(200, {"Content-Type": "application/json"});
-var options = {
- host: 'api.nytimes.com',
-  path:  '/svc/search/v1/article?query=' + searchterm +'&begin_date=' + startd + '&end_date=' + endd + '&facets=geo_facet&api-key=columbiahack&format=json'
-};
-  http.get(options, function(res){
-    var data = '';
-
-    res.on('data', function (chunk){
-        data += chunk;
-    });
-
-    res.on('end',function(){
-	thedata = JSON.parse(data);
-	
-		numarticles = thedata.results.length;
-		var counter = numarticles;
-		console.log(numarticles);
-
-	response.write("{ \"results\" : [\n");
-	makeRequests(thedata.results, numarticles -1, response, startd, endd);
-
-	});
-	});
-console.log(pathname);
+response.write("{ \"results\" : [\n");
+var numpages = 4;
+makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
 
   }
   else if (pathname.substring(0,7) === "gplace/")
