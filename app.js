@@ -76,7 +76,7 @@ var options = {
 	makeAllRequests(ii - 1, pathname, response, searchterm, startd, endd);
 	});
 	});
-console.log(pathname);
+console.log("pName: "+pathname);
 }
 
 
@@ -112,14 +112,14 @@ var searchterm = pathname;
 
  response.writeHead(200, {"Content-Type": "application/json"});
 response.write("{ \"results\" : [\n");
-var numpages = 15;
+var numpages = 1;
 makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
 
   }
   else if (pathname.substring(0,7) === "gplace/")
   {
-   pathname = pathname.substring(7);
    console.log(pathname);
+   pathname = pathname.substring(7);
    response.writeHead(200, {"Content-Type": "application/json"});
    /*var options = {
      host: 'api.nytimes.com',
@@ -144,15 +144,15 @@ makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
 
       res.on('end',function(){
        response.write(data);
-       console.log(data);
+       console.log("d: "+data);
        response.end();
      })
     }); 
   } 
   else if (pathname.substring(0,4) === "nyt/")
   {
-   pathname = pathname.substring(4);
    console.log(pathname);
+   pathname = pathname.substring(4);
    response.writeHead(200, {"Content-Type": "application/json"});
    var options = {
      host: 'api.nytimes.com',
@@ -179,9 +179,9 @@ makeAllRequests(numpages, pathname, response, searchterm, startd, endd);
   }
   else if (pathname.substring(0,4) === "myt/")
   {
+    console.log(pathname);
     pathname = pathname.substring(4);
     var arr = pathname.split("/");
-    console.log(pathname);
     response.writeHead(200, {"Content-Type": "application/json"});
     var cb = Array(arr[1]-arr[0]);
     for (var i = arr[0], j = 0; i < arr[1]; i++, j++) 
