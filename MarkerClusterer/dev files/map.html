@@ -8,6 +8,7 @@
   #map {
     width: 100%;
     height: 80%;
+    z-index: -1;
   }
 
   </style>
@@ -30,8 +31,8 @@
 
  <script type="text/javascript">
       
-      var start = 20070505;
-      var end = 20100101;
+      var start = 2007;
+      var end = 2010;
       var topic = "romney";
 
     function getChart()
@@ -47,13 +48,14 @@
             var w = 800;
             var h = 100;
             var barPadding = 1;
-            
+            initialize();
             //Create SVG element
             var svg1 = d3.select("body")
                         .append("svg")
                         .attr("width", w)
                         .attr("height", h);
-            var sum =0, sq_sum = 0, max =0;         
+            var sum =0, sq_sum = 0, max =0;  
+             
            for(var i =0; i< dataset.years.length; i++)
            {
                 sum += dataset.years[i].response.meta.hits;
@@ -62,17 +64,23 @@
                 
                 $("body").append("<div id='dialog"+i+"' title='Top articles for "+txt_topic.value+"' ></div>");
                 $("#dialog"+i).css("visibility", "hidden");
+                $("#dialog"+i).css("position", "fixed");
+                $("#dialog"+i).css("z-index", 1);
+                $("#dialog"+i).css("background-color", "white");
+                $("#dialog"+i).css("max-width", "265px");
+                //$("#dialog"+i).css("overflow", "hidden");
                 for(var j =0; j < dataset.years[i].response.docs.length; j++ )
                 {
                   var x = dataset.years[i].response.docs[j];
-                  $("#dialog"+i).append("<p><a href='"+x.web_url+"' target='_blank'"+x.headline.main+"</a></p>");
+                  $("#dialog"+i).append("<p><a href='"+x.web_url+"' target='_blank'>"+x.headline.main+"</a></p>");
                 }         
 
             }
+
             var mean = sum / dataset.years.length;
             var variance = sq_sum / dataset.years.length - mean * mean;
             var sd = Math.sqrt(variance);
-            
+
             svg1.selectAll("rect")
                .data(dataset.years)
                .enter()
@@ -98,7 +106,6 @@
                     $( "#dialog"+i ).dialog();
                     $( "#dialog"+i ).css('visibility','visible');
               });
-              initialize();
             });
             
           }
@@ -235,8 +242,9 @@ var marker = new google.maps.Marker({
    });
 
    markerCluster = new MarkerClusterer(map);
-
-   var query = "/otx/"+topic+"?start="+start+"&end="+end+"";
+   var start1 = start + "0101";
+   var end1 = end + "1231";
+   var query = "/otx/"+topic+"?start="+start1+"&end="+end1+"";
    $.ajax({
     url: query,
     type: 'get',
@@ -268,9 +276,9 @@ var marker = new google.maps.Marker({
   </head>
   <body>
     <div id="map"></div>
-    <input type="text" name="topic" id="txt_topic" size="30" maxlength="70">
-    <input type="text" name="sDate" id="txt_sDate" size="30" maxlength="70">
-    <input type="text" name="eDate" id="txt_eDate" size="30" maxlength="70">
+    <input type="text" name="topic" id="txt_topic" size="30" maxlength="70" value="Topic" >
+    <input type="text" name="sDate" id="txt_sDate" size="30" maxlength="70" value="Start Year">
+    <input type="text" name="eDate" id="txt_eDate" size="30" maxlength="70" value="End Year">
     <button type="button" onclick="getChart()">Get Chart!</button> 
   </body>
   </html>

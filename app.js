@@ -71,8 +71,9 @@ var options = {
 		var counter = numarticles;
 		console.log(numarticles);
 
-	
+	console.log("starting makeequests");
 	makeRequests(thedata.results, numarticles -1, response, startd, endd);
+  console.log("starting makeequestsAll");
 	makeAllRequests(ii - 1, pathname, response, searchterm, startd, endd);
 	});
 	});
@@ -89,10 +90,10 @@ http.createServer(function(request, response) {
     response.write(fs.readFileSync('MarkerClusterer/dev files/map.html'));
     response.end();
   }
-  else if (pathname === "src/data.json")
+  else if (pathname === "logo.gif")
   {
-    response.writeHead(200, {"Content-Type": "application/json"});
-    response.write(fs.readFileSync('MarkerClusterer/dev files/src/data.json'));
+    response.writeHead(200, {"Content-Type": "image/gif"});
+    response.write(fs.readFileSync('logo.gif'));
     response.end();
   }
   else if (pathname === "src/markerclusterer.js")
