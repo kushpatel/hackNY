@@ -16,7 +16,7 @@ http.createServer(function(request, response) {
   if (pathname === "home")
   {
     response.writeHead(200, {"Content-Type": "text/html"});
-    response.write(fs.readFileSync('index.html'));
+    response.write(fs.readFileSync('MarkerClusterer/dev files/map.html'));
     response.end();
   } 
   else if (pathname.substring(0,7) === "gplace/")
