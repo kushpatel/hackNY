@@ -20,8 +20,10 @@ http.createServer(function(request, response) {
 	  response.write(fs.readFileSync('index.html'));
 	  response.end();
   }
-  else
+  else if (pathname.substring(0,4) === "nyt/")
   {
+	pathname = pathname.substring(4);
+console.log(pathname);
       response.writeHead(200, {"Content-Type": "application/json"});
 var options = {
  // host: 'www.google.com',
