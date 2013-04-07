@@ -37,90 +37,151 @@
       //stores (lat, long) in hash table format
       var pointsArr = [];
       var markersArr = [];
-      var markerCluster;
 
-      /* check if a marker with the given (lat ,lng) exists */
-      function markerExists() {
-        return false;
-      }
+ function getCoordinates(place)
+ {
+  var query = "http://maps.googleapis.com/maps/api/geocode/json?address="+place+"&sensor=false";
+  
+  jQuery.extend({
+    getValues: function(query) {
+      var point = new Object();
+      $.ajax({
+        url: query,
+        type: 'get',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+          point.lat = data.results[0].geometry.location.lat;
+          point.lng = data.results[0].geometry.location.lng;
+        }
+      });
+      return point;
+    }
+  });
 
-      function addInfoWindow(marker,infowindow) {
+  return $.getValues(query);
+ }
 
-      }
+ //adds markers to the map via markerclusterer
+ /*function addMarkerToMap(headlines,link,place)
+ {
+   var geocoder = new google.maps.Geocoder();
+   var timeout = 1500;
 
-      function addMarker(lat,lng) {
-          //pair of (lat,long)
+   geocoder.geocode({ 'address' : place }, 
+     function(results, status, numTrials) 
+     {
+         if(status == google.maps.GeocoderStatus.OK)
+         {
+          var lat, lng;
           var point = new Object();
+          lat = results[0].geometry.location.lat();
+          lng = results[0].geometry.location.lng();
           point.lat = lat;
           point.lng = lng;
+          pointsArr.push(point);
 
-          //check if a marker with the given (lat ,lng) exists
-          if(pointsArr[lat+""+lng] == 1) {
-            //(lat,lng) offset to avoid overlapping points
-            //generates a random number 0-100
-            var randomnumber1 = Math.floor(Math.random()*101);
-            var randomnumber2 = Math.floor(Math.random()*101);
-            var offset1 = 0.0001*randomnumber1;
-            var offset2 = 0.0001*randomnumber2;
-            lat = parseFloat(lat) + parseFloat(offset1);
-            lng = parseFloat(lng) + parseFloat(offset2);
+          try {
+            //setTimeout(addMarker(lat,lng,headlines,link,place), 3000);
+            addMarker(lat,lng,headlines,link,place);
+          } catch(err) {
+            alert("Could not geocode: " + location);
           }
-          pointsArr[lat+""+lng] = 1;
-          
-          //set up marker to be added to map
-          var latLng = new google.maps.LatLng(lat,lng);
-          var contentString = 
-          '<div id="bodyContent" style="max-width: 200px; overflow: hidden;">'+
-          '<a href="http://google.com" target="_blank"><i>Google</i></a>'+
-          '</br><font>Kush Patel</font>'+
-          '</div>';
-          var imageUrl = 'http://chart.apis.google.com/chart?cht=mm&chs=24x32&' +
+        }
+        else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT)
+        {
+          setTimeout(function() { addMarkerToMap(headlines,link,place); }, (timeout * 3));
+        }
+    }
+  );
+   
+ }*/
+
+
+ function addMarker(lat,lng,headlines,link,place) {
+     //pair of (lat,long)
+     var point = new Object();
+     point.lat = lat;
+     point.lng = lng;
+
+     //check if a marker with the given (lat ,lng) exists
+     if(pointsArr[lat+""+lng] == 1) {
+       //(lat,lng) offset to avoid overlapping points
+       //generates a random number 0-100
+       var randomnumber1 = Math.floor(Math.random()*101);
+       var randomnumber2 = Math.floor(Math.random()*101);
+       var offset1 = 0.0001*randomnumber1;
+       var offset2 = 0.0001*randomnumber2;
+       lat = parseFloat(lat) + parseFloat(offset1);
+       lng = parseFloat(lng) + parseFloat(offset2);
+     }
+     pointsArr[lat+""+lng] = 1;
+     
+     //set up marker to be added to map
+     var latLng = new google.maps.LatLng(lat,lng);
+     var contentString = 
+     '<div id="bodyContent" style="max-width: 200px; overflow: hidden;">'+
+     '<h3>'+headlines+'</h3>'+
+     '<a href="'+link+'" target="_blank"><i>Read full article</i></a>'+
+     '</br><i>'+place+'</i>'+
+     '</div>';
+      var imageUrl = 'http://chart.apis.google.com/chart?cht=mm&chs=24x32&' +
                           'chco=FFFFFF,008CFF,000000&ext=.png';
-          var markerImage = new google.maps.MarkerImage(imageUrl, null, null, null,
-                                              new google.maps.Size(18, 18));
-          var marker = new google.maps.Marker({
-            position: latLng,
-            title: 'Marker',
-            html: contentString,
-            icon: markerImage
-          });
+      var markerImage = new google.maps.MarkerImage(imageUrl, null, null, null,
+                                         new google.maps.Size(18, 18));
+     var marker = new google.maps.Marker({
+       position: latLng,
+       html: contentString,
+       icon: markerImage
+     });
 
-          //add info window to the marker
-          infowindow = new google.maps.InfoWindow({
-            content: contentString
-          });
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent(this.html);
-            infowindow.open(map,this);
-          });
+     //add info window to the marker
+     infowindow = new google.maps.InfoWindow({
+       content: contentString
+     });
+     google.maps.event.addListener(marker, 'click', function() {
+       infowindow.setContent(this.html);
+       infowindow.open(map,this);
+     });
 
-          markersArr.push(marker);
-          //marker.setMap(map);
-      }
+     markersArr.push(marker);
+     //marker.setMap(map);
+     //markerCluster.addMarker(marker);
+ }
 
-      function initialize() {
-        //set up default map
-        var center = new google.maps.LatLng(centerLat,centerLong);
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: defaultZoomLvl,
-          center: center,
+ function initialize() {
+   //set up default map
+   var center = new google.maps.LatLng(centerLat,centerLong);
+   map = new google.maps.Map(document.getElementById('map'), {
+     zoom: defaultZoomLvl,
+     center: center,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
+
+   markerCluster = new MarkerClusterer(map);
 
         //get [Lat,Long] pairs from data.json to markers[]
         for (var i = 0; i < 100; i++) {
           var dataPhoto = data.photos[i];
-          var lat = dataPhoto.latitude;
-          var lng = dataPhoto.longitude;
+          var headlines = "Headline goes here";
+          var link = "http://nytimes.com";
+          var place = "New York";
           //add marker to markercluster
-          addMarker(lat,lng);
+          var lat = getCoordinates(place).lat;
+          var lng = getCoordinates(place).lng;
+          addMarker(lat,lng,headlines,link,place);
         }
 
+        //addMarkerToMap(null,null,"New York City");
+        //alert(pointsArr);
         //googleEarth = new GoogleEarth(map);
         //google.maps.event.addListenerOnce(map, 'tilesloaded', addAllMarkers);     
 
         //add all markers to markerclusterer
         markerCluster = new MarkerClusterer(map, markersArr);
+
+        //alert(getCoordinates("New York").lat);
+        //alert(latitudes[0]);
       }
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
