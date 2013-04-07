@@ -144,10 +144,10 @@
 	/* add a single marker to the markers array */
 	function addMarker(record,coord,typeId)
 	{
-		/*var imageUrl = 'http://chart.apis.google.com/chart?cht=mm&chs=24x32&' +
+		var imageUrl = 'http://chart.apis.google.com/chart?cht=mm&chs=24x32&' +
 			'chco=FFFFFF,008CFF,000000&ext=.png';
-		*/	
-		var imageUrl;
+			
+		/*var imageUrl;
 		if(typeId == 0)
 			imageUrl = 'icons/Circle.png';
 		else if(typeId == 1)
@@ -158,7 +158,7 @@
 			imageUrl = 'icons/Triangle.png';
 		else if(typeId == 4)
 			imageUrl = 'icons/Square.png';
-		
+		*/
 		var markerImage = new google.maps.MarkerImage(imageUrl, null, null, null,
 			new google.maps.Size(18, 18));
 		
